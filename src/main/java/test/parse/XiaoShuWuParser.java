@@ -5,19 +5,50 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 
 public class XiaoShuWuParser {
 
+    public static Set<String> keys = new TreeSet();
+    public static BufferedWriter logFile;
+
+    public static List<String> keyList = new ArrayList();
+    static {
+        keyList.add("360网盘密码");
+        keyList.add("AZW3格式(推荐)");
+        keyList.add("EPUB格式");
+        keyList.add("MOBI格式");
+        keyList.add("PDF格式");
+        keyList.add("城通网盘(备份)");
+        keyList.add("天翼云盘(推荐)");
+        keyList.add("天翼云盘密码");
+        keyList.add("微软云盘");
+        keyList.add("百度网盘");
+        keyList.add("百度网盘密码");
+
+        try {
+            logFile = new BufferedWriter(new FileWriter("/Users/wujing/Workspaces/idea/luckbook/books/pages/xiaoshuwu.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws Exception{
+
+
        int minPage = 0;
        int maxPage = 30446;
 
+        System.out.println("文件名\t360网盘密码\tAZW3格式(推荐)\tEPUB格式\tMOBI格式\tPDF格式\t城通网盘(备份)\t天翼云盘(推荐)\t天翼云盘密码\t微软云盘\t百度网盘\t百度网盘密码");
+        logFile.write("文件名\t360网盘密码\tAZW3格式(推荐)\tEPUB格式\tMOBI格式\tPDF格式\t城通网盘(备份)\t天翼云盘(推荐)\t天翼云盘密码\t微软云盘\t百度网盘\t百度网盘密码");
+        logFile.newLine();
         for (int i = minPage; i < maxPage ; i++) {
             parse(i);
         }
+
+        logFile.close();
     }
 
     public static void parse(int fileIndex) throws Exception {
@@ -66,6 +97,8 @@ public class XiaoShuWuParser {
                                     String s1 = secretSplits[0];
                                     String s2 = secretSplits[1];
                                     bookDetails.put(s1, s2);
+                                    keys.add(s1);
+
                                 }
                             }
                         }
@@ -77,6 +110,7 @@ public class XiaoShuWuParser {
                         String s1 = secretSplits[0];
                         String s2 = secretSplits[1];
                         bookDetails.put(s1, s2);
+                        keys.add(s1);
                     }
                 }
             }
@@ -92,19 +126,27 @@ public class XiaoShuWuParser {
                             String text = link.text();
 //                            System.out.println(text + " : " + href);
                             bookDetails.put(text,href);
+                            keys.add(text);
+
                         }
                     }
                 }
             }
 
-            System.out.println("文件编号 : " + fileIndex);
-            System.out.println("文件名称" +" : "+  bookName);
-            Iterator<String> keyIterator = bookDetails.keySet().iterator();
-            while(keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                String value = bookDetails.get(key);
-                System.out.println(key +" : "+ value);
+            System.out.print(bookName + "\t");
+            logFile.write(bookName + "\t");
+
+            for (String key: keyList) {
+                String value = "";
+                if(bookDetails.containsKey(key)) {
+                    value = bookDetails.get(key);
+                }
+                System.out.print(value + "\t");
+                logFile.write(value + "\t");
+
             }
+            System.out.println();
+            logFile.newLine();
         }
     }
 }
