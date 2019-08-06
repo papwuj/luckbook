@@ -22,7 +22,7 @@ public class XiaoShuWuParser {
 
     public static void parse(int fileIndex) throws Exception {
 
-        File input = new File("E:/Workspaces/Idea/luckbook/src/test/xiaoshuwu/"+fileIndex+".html");
+        File input = new File("/Users/wujing/Workspaces/idea/luckbook/books/pages/xiaoshuwu/"+fileIndex+".html");
         if(input.exists()) {
             Document doc = Jsoup.parse(input, "UTF-8", "http://mebook.cc/");
             String title = doc.title();
